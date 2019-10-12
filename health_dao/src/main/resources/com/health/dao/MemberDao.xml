@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.MemberDao">
+    <select id="FindMemberByTelephoneAndIdCard" parameterType="string" resultType="Member">
+    SELECT  * FROM t_member WHERE phoneNumber=#{telephone} AND idCard=#{idCard}
+    </select>
+
+    <insert id="AddMember" parameterType="Member">
+        INSERT INTO t_member (fileNumber, name, sex, idCard, phoneNumber, regTime, password, email, birthday, remark)
+        VALUES (
+        #{fileNumber},#{name},#{sex},#{idCard},#{phoneNumber},#{regTime},#{password},#{email},#{birthday},#{remark})
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--统计当日新增会员-->
+    <sql id="getMemberCount">
+        SELECT COUNT(*) FROM t_member
+    </sql>
+
+    <select id="getTodayMemberCount" parameterType="string" resultType="int">
+        <include refid="getMemberCount"/> WHERE regTime=#{reportDate}
+    </select>
+
+    <!--统计本周新增会员/统计本月新增会员-->
+    <select id="getThisWeekOrMonthMemberCount" parameterType="string" resultType="int">
+        <include refid="getMemberCount"/>
+        WHERE regTime BETWEEN #{start} AND #{end}
+    </select>
+
+    <!--统计总会员数-->
+    <select id="getTotalMemberCount" resultType="int">
+        <include refid="getMemberCount"/>
+    </select>
+
+</mapper>

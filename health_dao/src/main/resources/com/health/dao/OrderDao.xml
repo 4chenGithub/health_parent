@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.OrderDao">
+
+    <select id="FindOrderByOrderDateAndMemberIdAndPackageId" parameterType="map" resultType="Order">
+        SELECT  * FROM t_order WHERE member_id=#{memberId} AND orderDate=#{date} AND package_id=#{PackageId}
+    </select>
+
+    <insert id="AddOrder" parameterType="order">
+        INSERT INTO t_order( member_id, orderDate, orderType, orderStatus, package_id)
+        VALUES (#{memberId}, #{orderDate}, #{orderType}, #{orderStatus}, #{packageId})
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="FindById" parameterType="int" resultType="map">
+        SELECT m.name name,p.name packageName,o.orderDate,o.orderType
+        FROM t_member m,t_package p,t_order o WHERE o.member_id=m.id AND
+          o.package_id=p.id AND o.id=#{id}
+    </select>
+
+    <!--统计今日预约数-->
+    <sql id="getOrderCount">
+        SELECT COUNT(*) FROM t_order
+    </sql>
+    <select id="getTodayOrderNumber" parameterType="string" resultType="int">
+        <include refid="getOrderCount"/> WHERE orderDate=#{reportDate}
+    </select>
+
+    <!--统计今日到诊数-->
+    <select id="getTodayVisitsNumber" parameterType="string" resultType="int">
+        <include refid="getOrderCount"/> WHERE orderDate=#{reportDate} AND orderStatus='已到诊'
+    </select>
+
+    <!--统计本周预约数/本月预约数-->
+    <select id="getThisWeekOrMonthOrderNumber" parameterType="string" resultType="int">
+        <include refid="getOrderCount"/> WHERE orderDate BETWEEN #{startDay} AND #{endDay}
+    </select>
+
+    <!--统计本周到诊数/本月到诊数-->
+    <select id="getThisWeekOrMonthVisitsNumber" parameterType="string" resultType="int">
+        <include refid="getOrderCount"/> WHERE orderStatus='已到诊' AND orderDate BETWEEN #{startDay} AND #{endDay}
+    </select>
+
+    <!--热门套餐：取出预约人数倒序排序前4个-->
+    <select id="getHotPackage" resultType="map">
+        SELECT
+        tp.name,
+        CONVERT(COUNT(0),SIGNED) count,
+        CAST((COUNT(0)/t.number) AS DECIMAL(10,3)) proportion
+        ,tp.remark remark
+        FROM t_package tp,t_order tr, (SELECT COUNT(0) number FROM t_order) t
+        WHERE tp.id=tr.package_id GROUP BY NAME ORDER BY COUNT(0) DESC LIMIT 0,4
+    </select>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--配置匿名访问资源-->
+    <security:http security="none" pattern="/css/**"/>
+    <security:http security="none" pattern="/js/**"/>
+    <security:http security="none" pattern="/img/**"/>
+    <security:http security="none" pattern="/plugins/**"/>
+    <security:http security="none" pattern="/template/**"/>
+    <security:http security="none" pattern="/wdatapicker/**"/>
+    <security:http security="none" pattern="/pages/login.html"/>
+
+    <!--配置http拦截器-->
+    <security:http auto-config="true" use-expressions="true">
+        <security:headers>
+           <!-- 设置在页面可以通过iframe访问受保护的页面，默认为不允许访问
+			Spring-Security 默认是设置了 “X-Frame-Options” 属性为DENY
+			有三个：
+				DENY — 表示该页面不允许在 frame 中展示，即便是在相同域名的页面中嵌套也不允许。
+				SAMEORIGIN — 表示该页面可以在相同域名页面的 frame 中展示。
+				ALLOW-FROM https://example.com/ — 表示该页面可以在指定来源的 frame 中展示。
+-->            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+
+        <security:intercept-url pattern="/**" access="isAuthenticated()"/>
+        <security:form-login
+                login-page="/pages/login.html"
+                username-parameter="username"
+                password-parameter="password"
+                login-processing-url="/user/login"
+                default-target-url="/pages/main.html"
+                always-use-default-target="true"
+                authentication-failure-url="/pages/login.html"
+        />
+        <!--关闭跨域限制-->
+        <security:csrf disabled="true"/>
+        <!--配置退出登陆-->
+        <security:logout invalidate-session="true" logout-url="/user/logout" logout-success-url="/pages/login.html"/>
+    </security:http>
+
+    <!--认证管理器-->
+  <!--  <security:authentication-manager>
+        <security:authentication-provider user-service-ref="securityUserService">
+             <security:password-encoder ref="bCryptPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>-->
+
+    <!--将实现类加载到核心容器-->
+    <!--<bean id="securityUserService" class="com.itheima.security.SpringSecurityUserServiceImpl"/>-->
+
+    <!--配置密码加密对象-->
+    <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <!--开启注解驱动-->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
+</beans>

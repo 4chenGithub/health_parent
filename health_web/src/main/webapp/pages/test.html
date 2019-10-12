@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--引入js脚本-->
+    <script src="../wdatapicker/My97DatePicker/WdatePicker.js"></script>
+    <script src="../js/jquery.min.js"></script>
+</head>
+<body>
+<!--开始时间：
+<input id="d411" name="sendStartDate" class="Wdate" type="text" onfocus="WdatePicker({skin:'whyGreen',minDate: '2006-09-10', maxDate: '#F{$dp.$D(\'sendEndDate\')||\'%y-%M-%d\'}' })"/>
+结束时间：
+<input id="d412"  name="sendEndDate" class="Wdate" type="text" onfocus="WdatePicker({skin:'whyGreen',minDate: '#F{$dp.$D(\'sendStartDate\')||\'%y-%M-%d\'}', maxDate: '%y-%M-%d'})"/>-->
+<!--skin:背景颜色 minDate限制最小日期是2019-9-30,maxDate限制最大日期是2019-10-08-->
+<input id="d1" type="text" onfocus="WdatePicker({
+    skin:'whyGreen',
+    minDate:'2019-9-30',
+    maxDate:'2019-10-08'
+})"><br/>
+
+<!--动态限制:
+最小日期:%y-%M-%d表示当天开始
+最大日期:%y-%M-#{%d+30}表示当天开始往后30天
+-->
+<input id="d2" type="text" onfocus="WdatePicker({
+skin:'whyGreen',
+minDate:'%y-%M-%d',
+maxDate:'%y-%M-#{%d+30}'
+})"><br/>
+
+<!--
+#F{}里面可以自定义js代码
+$dp.$D()函数可以动态获取指定标签的日期值
+-->
+<!--表示最大值不大于id等于d4的值,如果为空,则最大值不大于2020-10-01-->
+<input type="text" id="d3" onfocus="WdatePicker({
+skin:'whyGreen',
+maxDate:'#F{$dp.$D(\'d4\') || \'2020-10-01\'}'
+})"><br/>
+
+<!--表示最小值大于id等于d3的值,最大值小于2020-10-01-->
+<input type="text" id="d4" onfocus="WdatePicker({
+skin:'whyGreen',
+minDate:'#F{$dp.$D(\'d3\')}',
+maxDate:'2020-10-01'
+})"><br/>
+
+<!--
+{d:+3}日期差量:表示在此基础上加3天
+-->
+<!--表示最大值小于id为d6的值,如果为空时,则最大值不大于今日-->
+<input type="text" id="d5" onfocus="WdatePicker({
+skin:'whyGreen',
+maxDate:'#F{$dp.$D(\'d6\') || \'%y-%M-%d\'}'
+})"><br/>
+<!--表示最小值是id等于d5的后3天-->
+<input type="text" id="d6" onfocus="WdatePicker({
+skin:'whyGreen',
+minDate:'#F{$dp.$D(\'d5\',{d:+3})}',
+maxDate:'2020-10-01'
+})">
+
+<!--动态选择时间段获取每个月的会员数量-->
+开始时间:
+<!--最小值表示当前时间往前2年,表示最早只能查2年前
+最大值表示当前时间往前一个月,同样是保证两个时间之间至少有一个月
+-->
+<input type="text" id="d7" onfocus="WdatePicker({
+skin:'whyGreen',
+minDate:'#{%y-2}-%M-%d',
+maxDate:'%y-#{%M-1}-%d'
+})">
+结束时间:
+<!--表示最小时间大于id为d7的值往后一个月,保证时间段至少有一个月
+最大时间表示不能大于当日,因为未来的会员数量不可知
+-->
+<input type="text" id="d8" onfocus="WdatePicker({
+skin:'whyGreen',
+minDate:'#F{$dp.$D(\'d7\',{M:+1})}',
+maxDate:'%y-%M-%d'
+})">
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.ReportDao">
+    <select id="FindMemberCount" parameterType="string" resultType="int">
+        SELECT COUNT(0) FROM t_member WHERE regTime <![CDATA[
+          <= #{endMonth}
+        ]]>
+    </select>
+    
+    <select id="getPackageReport"  resultType="map">
+        SELECT tp.name,COUNT(0) AS value FROM t_package tp,t_order tr WHERE tp.id=tr.package_id GROUP BY NAME
+    </select>
+</mapper>

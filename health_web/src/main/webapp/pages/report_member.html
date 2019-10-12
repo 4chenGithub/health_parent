@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>传智健康</title>
+    <meta name="description" content="传智健康">
+    <meta name="keywords" content="传智健康">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/echarts.js"></script>
+    <script src="../wdatapicker/My97DatePicker/WdatePicker.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+     <!--<link href="../plugins/elementui/index.js"/>-->
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body class="hold-transition">
+<div id="app">
+    <div class="content-header">
+        <h1>统计分析
+            <small>会员数量</small>
+        </h1>
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>统计分析</el-breadcrumb-item>
+            <el-breadcrumb-item>会员数量</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
+    <form onsubmit="return false">
+        <!--动态选择时间段获取每个月的会员数量-->
+        <label for="d7"> 开始时间:</label>
+        <!--最小值表示当前时间往前2年,表示最早只能查2年前
+        最大值表示当前时间往前一个月,同样是保证两个时间之间至少有一个月
+        -->
+         <input type="text" v-model="TimeStart" id="d7" onfocus="WdatePicker({
+             skin:'whyGreen',
+             minDate:'#{%y-2}-%M-%d',
+             maxDate:'%y-#{%M-1}-%d'
+          })">
+       <!-- <input type="text" id="d7" v-model="TimeStart">-->
+        <label for="d8">结束时间:</label>
+        <!--表示最小时间大于id为d7的值往后一个月,保证时间段至少有一个月
+        最大时间表示不能大于当日,因为未来的会员数量不可知
+        -->
+         <input type="text" v-model="TimeEnd" id="d8" onfocus="WdatePicker({
+            skin:'whyGreen',
+            minDate:'#F{$dp.$D(\'d7\',{M:+1})}',
+            maxDate:'%y-%M-%d'
+          })">
+        <!--<input type="text" id="d8" v-model="TimeEnd">-->
+        <button v-on:click="exportExcel()">统计会员数量</button>
+    </form>
+    <div class="app-container">
+        <div class="box">
+            <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+            <div id="chart1" style="height:600px;"></div>
+        </div>
+    </div>
+</div>
+</body>
+<!-- 引入组件库 -->
+<script>
+
+    //myChart1.setOption(option);
+    // 基于准备好的dom，初始化echarts实例
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            TimeStart: "",
+            TimeEnd: "",
+            TimeTile: "会员数量",
+            months: [],
+            memberCount: []
+        },
+        created() {
+            this.show()
+        },
+        methods: {
+            exportExcel() {
+                /*获取id为d7的时间控件的输入框的值*/
+                var TimeStart=$dp.$('d7').value
+                /*获取id为d8的时间控件的输入框的值*/
+                var TimeEnd= $dp.$('d8').value
+                this.TimeStart = TimeStart.trim()
+                this.TimeEnd =TimeEnd.trim()
+                this.show()
+            },
+            show() {
+                axios.get("/report/getMemberReport?TimeStart=" + this.TimeStart + "&TimeEnd=" + this.TimeEnd).then((res) => {
+                    if (res.data.flag) {
+                        this.months = res.data.data.months
+                        this.memberCount = res.data.data.memberCount
+                        this.TimeTile = res.data.data.TimeTile
+                        var myChart1 = echarts.init(document.getElementById('chart1'));
+                        myChart1.setOption(
+                            {
+                                title: {
+                                    text: this.TimeTile
+                                },
+                                tooltip: {},
+                                legend: {
+                                    data: ['会员数量']
+                                },
+                                xAxis: {
+                                    data: this.months
+                                },
+                                yAxis: {
+                                    type: 'value'
+                                },
+                                series: [{
+                                    name: '会员数量',
+                                    type: 'line',
+                                    data: this.memberCount
+                                }]
+                            });
+                    } else {
+                        this.$message({
+                            message: res.data.message,
+                            type: res.data.flag  ? 'success' : 'error'
+                        });
+                    }
+                });
+            },
+
+
+        }
+    });
+    // 使用刚指定的配置项和数据显示图表。
+
+</script>
+</html>

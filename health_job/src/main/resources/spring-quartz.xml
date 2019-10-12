@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+   <!-- <context:annotation-config/>-->
+    <context:component-scan base-package="com.health.job"/>
+    <!--将自定义任务类存到核心容器-->
+    <bean id="myQuartz" class="com.health.job.MyQuartz"/>
+
+    <!--注册任务策略器-->
+    <!-- 注册JobDetail,作用是负责通过反射调用指定的Job -->
+    <bean id="jobDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 注入任务类对象 -->
+        <property name="targetObject" ref="myQuartz"/>
+        <!-- 注入任务类方法名 -->
+        <property name="targetMethod" value="deletePhoto"/>
+    </bean>
+
+    <!-- 注册一个触发器，指定任务触发的时间 -->
+    <bean id="myTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 注入JobDetail -->
+        <property name="jobDetail" ref="jobDetail"/>
+        <!-- 指定触发的时间，基于Cron表达式 -->
+        <property name="cronExpression">
+            <!--秒 分 时 日 月 周 年:每天晚上12点-->
+            <value>0 0 0 * * ?</value>
+        </property>
+    </bean>
+
+    <!-- 注册一个统一的调度工厂，通过这个调度工厂调度任务 -->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- 可以注入多个触发器 -->
+        <property name="triggers">
+            <list>
+                <ref bean="myTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <import resource="classpath:spring-redis.xml"/>
+</beans>
