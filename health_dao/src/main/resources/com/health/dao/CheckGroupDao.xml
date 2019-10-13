@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.CheckGroupDao">
+
+    <insert id="saveCheckGroup" parameterType="checkGroup">
+        INSERT INTO t_checkGroup VALUES (NULL ,#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="saveCheckGroupAndCheckItems" parameterType="map">
+              insert into t_checkgroup_checkitem(checkgroup_id,checkitem_id)
+      		values
+      	(#{id},#{Ids})
+    </insert>
+
+    <select id="FindAllPage" parameterType="string" resultType="CheckGroup">
+        SELECT * FROM t_checkGroup
+        <if test="value!=null and value.length>0 ">
+            WHERE code LIKE #{value} OR name LIKE #{value} OR helpCode LIKE #{value}
+        </if>
+    </select>
+
+    <select id="FindCheckItems" parameterType="int" resultType="CheckItem">
+        SELECT * FROM t_checkItem
+        <foreach collection="list" item="id" open="where id in (" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <update id="updateCheckGroup" parameterType="checkGroup">
+        UPDATE t_checkGroup
+        <set>
+            code=#{code}, name=#{name}, helpCode=#{helpCode}, sex=#{sex}, remark=#{remark}, attention=#{attention}
+        </set>
+        WHERE  id=#{id}
+    </update>
+
+</mapper>

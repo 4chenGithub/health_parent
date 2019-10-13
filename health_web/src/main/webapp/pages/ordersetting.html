@@ -268,7 +268,7 @@
                        { date: 8, number: 120, reservations: 1 }
                    ];*/
 
-               /* axios.get("/orderSetting/getAllDate?date=" + this.currentYear + "-" + this.currentMonth).then(res => {
+                axios.get("/orderSetting/getAllDate?date=" + this.currentYear + "-" + this.currentMonth).then(res => {
                     //提示查询结果
                     this.$message({
                         message: res.data.message,
@@ -278,7 +278,7 @@
                         //查询正确，将数据赋值到leftobj
                         this.leftobj = res.data.data
                     }
-                })*/
+                })
 
             },
             //切换到当前月份

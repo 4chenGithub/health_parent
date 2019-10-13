@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.UserDao">
+
+    <!--自定义映射规则-->
+    <resultMap id="findUserAndRoleAndPermission" type="user">
+        <id column="id" property="id"/>
+        <result column="birthday" property="birthday"/>
+        <result column="gender" property="gender"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="remark" property="remark"/>
+        <result column="station" property="station"/>
+        <result column="telephone" property="telephone"/>
+        <collection property="roles" ofType="role">
+            <id column="rid" property="id"/>
+            <result column="rName" property="name"/>
+            <result column="rKeyword" property="keyword"/>
+            <result column="rDescription" property="description"/>
+            <collection property="permissions" ofType="Permission">
+                <id column="pid" property="id"/>
+                <result column="pName" property="name"/>
+                <result column="pKeyword" property="keyword"/>
+                <result column="pDescription" property="description"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+
+    <select id="findUserByUsername" parameterType="string" resultMap="findUserAndRoleAndPermission">
+      SELECT tu.*,tr.id rid,tr.name rName,tr.keyword rKeyword,tr.description rDescription,
+          tp.id pid ,tp.name pName,tp.keyword pKeyword,tp.description pDescription
+          FROM t_user tu,t_role tr,t_user_role tur,t_permission tp,t_role_permission trp
+          WHERE tur.user_id=tu.id AND tur.role_id=tr.id
+          AND trp.role_id=tr.id AND trp.permission_id=tp.id
+          AND tu.username=#{username}
+    </select>
+</mapper>

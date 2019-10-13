@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.PackageDao">
+
+    <insert id="SavePackage" parameterType="package">
+        INSERT INTO t_package(name,code,helpCode,sex,age,price,remark,attention,img)
+        VALUES (#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="AddPackageAndCheckGroup" parameterType="int">
+        INSERT INTO t_package_checkGroup VALUES (#{id},#{checkgroupId})
+    </insert>
+
+    <select id="findAllPage" parameterType="string" resultType="package">
+      SELECT * FROM t_package
+      <if test="value !=null and value.length>0 ">
+          WHERE code LIKE #{value} OR name LIKE #{value} OR helpCode LIKE #{value}
+      </if>
+    </select>
+
+    <select id="findAllPackage" resultType="Package">
+        SELECT * FROM t_package
+    </select>
+    <!--多表查询自定义映射-->
+    <resultMap id="findPackageCheckGroupCheckItem" type="package">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="helpCode" column="helpCode"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="price" column="price"/>
+        <result property="remark" column="remark"/>
+        <result property="attention" column="attention"/>
+        <result property="img" column="img"/>
+        <!--进行一对多映射-->
+        <collection property="checkGroups" ofType="CheckGroup">
+            <id property="id" column="cgId"/>
+            <result property="name" column="cgName"/>
+            <result property="remark" column="cgRemark"/>
+            <!--进行一对多映射-->
+            <collection property="checkItems" ofType="CheckItem">
+                <id property="id" column="ciId"/>
+                <result property="name" column="ciName"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="findById" parameterType="int" resultMap="findPackageCheckGroupCheckItem">
+      SELECT p.*,c.id cgId ,c.name cgName,c.remark cgRemark,i.id ciId,i.name ciName
+      FROM t_package p,t_checkGroup c,t_package_checkgroup pc ,t_checkitem i ,t_checkgroup_checkitem cc
+      WHERE p.id=pc.package_id AND c.id=pc.checkgroup_id AND cc.checkgroup_id=c.id AND cc.checkitem_id=i.id AND p.id=#{id}
+    </select>
+
+    <select id="findByPackageId" parameterType="int" resultType="package">
+        SELECT * FROM t_package WHERE id=#{id}
+    </select>
+</mapper>
