@@ -143,6 +143,9 @@ public class ReportServiceImpl implements ReportService {
         return map;
     }
 
+
+
+
     public static void main(String[] args) throws Exception {
         Date date = DateUtils.getToday();
         String reportDate = null;
@@ -164,6 +167,25 @@ public class ReportServiceImpl implements ReportService {
         String sunday = DateUtils.parseDate2String(DateUtils.getSundayOfThisWeek());
         System.out.println(sunday);
 
+    }
+
+
+
+    /**
+     * 男女占比
+     */
+    @Override
+    public List<Map<String, Object>> findSexCount() {
+        return reportDao.findSexCount();
+    }
+
+
+    /**
+     * 年龄段占比
+     */
+    @Override
+    public List<Map<String, Object>> findAgeCount() {
+        return reportDao.findAgeCount();
     }
 
 }

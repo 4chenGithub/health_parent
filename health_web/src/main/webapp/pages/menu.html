@@ -85,6 +85,7 @@
                         :total="pagination.total">
                 </el-pagination>
             </div>
+
             <!-- 新增标签弹层 -->
             <div class="add-form">
                 <el-dialog title="新增菜单" :visible.sync="dialogFormVisible">
@@ -246,7 +247,6 @@
                                         </tr>
                                         </tbody>
                                     </table>
-
                                 </div>
                             </el-tab-pane>
                         </el-tabs>
@@ -290,10 +290,6 @@
             this.findPage();
         },
         methods: {
-            ShowMenuIcon() {//展示所有图标（暂定）
-                axios.get("/menu/FindAllMenuIcon").then(res => {
-                })
-            },
             //编辑
             handleEdit() {
                 //先判断是否有选中,如果没有选中检查项则进行提示
@@ -331,7 +327,6 @@
                 })
 
             },
-            //查询时去空格
             search() {
                 this.pagination.queryString = (this.pagination.queryString).trim()
                 //查询的时候,设置当前页码为1
@@ -471,6 +466,7 @@
                 //删除检查组
                 var id = row.id
                 //要进行防呆操作
+
                 //提示是否删除,防止误操作删除
                 this.$confirm('此操作将[永久删除]该项, 是否继续?', '提示', {
                     confirmButtonText: '确定',
