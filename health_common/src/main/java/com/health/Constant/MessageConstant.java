@@ -67,4 +67,27 @@ public class MessageConstant {
     public static final String SERVER_ERROR = "服务器异常";
     public static final String ALREADY_SEND_VALIDATECODE = "验证码已经发送过了,请注意查收";
     public static final String NEED_VALIDATECODE = "请输入验证码";
+
+    public static final String QUERY_MENUS_SUCCESS = "查询菜单列表成功";
+    public static final String QUERY_MENUS_FAIL = "查询菜单列表失败";
+    public static final String ADD_MENU_SUCCESS = "新增菜单成功";
+    public static final String ADD_MENU_FAIL = "新增菜单失败";
+    public static final String MENU_PATH_IS_EXIST_FAIL = "新增菜单路径已存在";
+    public static final String DELETE_MENU_SUCCESS = "删除菜单成功";
+    public static final String DELETE_MENU_BE_USER = "删除的菜单已经被引用";
+    public static final String QUERY_MENU_SUCCESS = "菜单数据回显成功";
+    public static final String QUERY_MENU_FAIL = "菜单数据回显失败";
+    public static final String EDIT_MENU_SUCCESS = "编辑菜单成功";
+    public static final String EDIT_MENU_FAIL = "编辑菜单失败";
+
+
+
+    public static final String ADD_USER_SUCCESS = "新增用户成功";
+    public static final String ADD_USER_FAIL = "新增用户失败";
+    public static final String QUERY_ROLES_SUCCESS = "查询角色列表成功";
+    public static final String QUERY_CHECKED_ROLES_SUCCESS = "查询选中角色列表成功";
+    public static final String QUERY_USER_SUCCESS = "查询用户信息成功";
+    public static final String EDIT_USER_SUCCESS = "编辑用户成功";
+    public static final String EDIT_USER_FAIL = "编辑用户失败";
+    public static final String DELETE_USER_SUCCESS = "删除用户成功";
 }

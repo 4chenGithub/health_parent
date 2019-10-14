@@ -46,28 +46,35 @@
 <div id="app">
     <div class="content-header">
         <h1>超级管理
-            <small>菜单管理</small>
+            <small>用户管理</small>
         </h1>
         <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>超级管理</el-breadcrumb-item>
-            <el-breadcrumb-item>菜单管理</el-breadcrumb-item>
+            <el-breadcrumb-item>用户管理</el-breadcrumb-item>
         </el-breadcrumb>
     </div>
     <div class="app-container">
         <div class="box">
             <div class="filter-container">
-                <el-input placeholder="菜单名称/菜单路径/菜单Icon" v-model="pagination.queryString" style="width: 200px;"
+                <el-input placeholder="用户名/性别/手机号码" v-model="pagination.queryString" style="width: 200px;"
                           class="filter-item" @keyup.enter.native="handleFilter"></el-input>
                 <el-button @click="search()" class="dalfBut">查询</el-button>
                 <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
             </div>
             <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
                 <el-table-column type="index" align="center" label="序号"></el-table-column>
-                <el-table-column prop="name" label="菜单名称" align="center"></el-table-column>
-                <el-table-column prop="path" label="菜单路径" align="center"></el-table-column>
-                <el-table-column prop="icon" label="菜单Icon" align="center"></el-table-column>
-                <el-table-column prop="description" label="菜单描述" align="center"></el-table-column>
+                <el-table-column prop="username" label="用户名" align="center"></el-table-column>
+                <el-table-column prop="password" label="密码" align="center"></el-table-column>
+                <el-table-column prop="birthday" label="生日" align="center"></el-table-column>
+                <el-table-column label="性别" align="center">
+                    <template slot-scope="scope">
+                        <span>{{ scope.row.gender == '0' ? '不限' : scope.row.gender == '1' ? '男' : '女'}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="station" label="状态" align="center"></el-table-column>
+                <el-table-column prop="telephone" label="手机号码" align="center"></el-table-column>
+                <el-table-column prop="remark" label="用户描述" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -87,66 +94,74 @@
             </div>
             <!-- 新增标签弹层 -->
             <div class="add-form">
-                <el-dialog title="新增菜单" :visible.sync="dialogFormVisible">
+                <el-dialog title="新增用户" :visible.sync="dialogFormVisible">
                     <template>
                         <el-tabs v-model="activeName" type="card">
-                            <el-tab-pane label="父菜单基本信息" name="first">
+                            <el-tab-pane label="用户基本信息" name="first">
                                 <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right"
                                          label-width="100px">
                                     <el-row>
                                         <el-col :span="12">
-                                            <el-form-item label="菜单名称"  prop="name" >
-                                                <el-input v-model="formData.name"/>
+                                            <el-form-item label="用户名" prop="name">
+                                                <el-input v-model="formData.username"/>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="12">
-                                            <el-form-item label="菜单路径"  prop="path">
-                                                <el-input v-model="formData.path"/>
+                                            <el-form-item label="密码" prop="password">
+                                                <el-input v-model="formData.password"/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
                                     <el-row>
                                         <el-col :span="12">
-                                            <el-form-item label="图标"  prop="icon">
-                                                <el-select v-model="formData.icon" id="MenuIcon">
-                                                    <el-option label="el-icon-platform-eleme"
-                                                               value="el-icon-platform-eleme"></el-option>
-                                                    <el-option label="el-icon-eleme" value="el-icon-eleme"></el-option>
-                                                    <el-option label="el-icon-delete-solid"
-                                                               value="el-icon-delete-solid"></el-option>
-                                                    <el-option label="el-icon-s-tools"
-                                                               value="el-icon-s-tools"></el-option>
-                                                    <el-option label="el-icon-setting"
-                                                               value="el-icon-setting"></el-option>
-                                                    <el-option label="el-icon-phone-outline"
-                                                               value="el-icon-phone-outline"></el-option>
+                                            <el-form-item label="性别" prop="gender">
+                                                <el-select v-model="formData.gender">
+                                                    <el-option label="不限" value="0"></el-option>
+                                                    <el-option label="男" value="1"></el-option>
+                                                    <el-option label="女" value="2"></el-option>
                                                 </el-select>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="12">
-                                            <el-form-item label="菜单优先级"  prop="priority">
-                                                <el-input v-model="formData.priority"/>
+                                            <el-form-item label="生日" prop="birthday">
+                                                <el-col>
+                                                    <el-date-picker type="date" placeholder="选择日期"
+                                                                    v-model="formData.birthday"
+                                                                    style="width: 100%;"></el-date-picker>
+                                                </el-col>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="状态">
+                                                <el-input v-model="formData.station"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="手机号码" prop="telephone">
+                                                <el-input v-model="formData.telephone"/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
                                     <el-row>
                                         <el-col :span="24">
                                             <el-form-item label="描述">
-                                                <el-input v-model="formData.description" type="textarea"></el-input>
+                                                <el-input v-model="formData.remark" type="textarea"></el-input>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
                                 </el-form>
                             </el-tab-pane>
-                            <el-tab-pane label="子菜单" name="second">
+                            <el-tab-pane label="角色信息" name="second">
                                 <div class="checkScrol">
                                     <table class="datatable">
                                         <thead>
                                         <tr>
                                             <th>选择</th>
-                                            <th>菜单名称</th>
-                                            <th>菜单Url</th>
-                                            <th>菜单说明</th>
+                                            <th>角色名称</th>
+                                            <th>角色关键字</th>
+                                            <th>角色描述</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -155,7 +170,7 @@
                                                 <input :id="c.id" v-model="childrenIds" type="checkbox" :value="c.id">
                                             </td>
                                             <td><label :for="c.id">{{c.name}}</label></td>
-                                            <td><label :for="c.id">{{c.linkUrl}}</label></td>
+                                            <td><label :for="c.id">{{c.keyword}}</label></td>
                                             <td><label :for="c.id">{{c.description}}</label></td>
                                         </tr>
                                         </tbody>
@@ -171,68 +186,81 @@
                     </div>
                 </el-dialog>
             </div>
+
             <!-- 编辑标签弹层 -->
             <div class="add-form">
                 <el-dialog title="编辑检查组" :visible.sync="dialogFormVisible4Edit">
                     <template>
                         <el-tabs v-model="activeName" type="card">
-                            <el-tab-pane label="父菜单基本信息" name="first">
-                                <el-form ref="editAddForm" :model="formData" :rules="rules" label-position="right"
-                                         label-width="100px">
+                            <el-tab-pane label="用户基本信息" name="first">
+                                <el-form ref="editAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
                                     <el-row>
                                         <el-col :span="12">
-                                            <el-form-item label="菜单名称"  prop="name">
-                                                <el-input v-model="formData.name"/>
+                                            <el-form-item label="用户id">
+                                                <el-input v-model="formData.id" :disabled="true"/>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="12">
-                                            <el-form-item label="菜单路径"  prop="path">
-                                                <el-input v-model="formData.path" :disabled="true"/>
+                                            <el-form-item label="用户名">
+                                                <el-input v-model="formData.username" prop="name"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="密码">
+                                                <el-input v-model="formData.password" prop="password"/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
                                     <el-row>
                                         <el-col :span="12">
-                                            <el-form-item label="图标"  prop="icon">
-                                                <el-select v-model="formData.icon" id="MenuIcon">
-                                                    <el-option label="el-icon-platform-eleme"
-                                                               value="el-icon-platform-eleme"></el-option>
-                                                    <el-option label="el-icon-eleme" value="el-icon-eleme"></el-option>
-                                                    <el-option label="el-icon-delete-solid"
-                                                               value="el-icon-delete-solid"></el-option>
-                                                    <el-option label="el-icon-s-tools"
-                                                               value="el-icon-s-tools"></el-option>
-                                                    <el-option label="el-icon-setting"
-                                                               value="el-icon-setting"></el-option>
-                                                    <el-option label="el-icon-phone-outline"
-                                                               value="el-icon-phone-outline"></el-option>
+                                            <el-form-item label="性别" prop="gender">
+                                                <el-select v-model="formData.gender">
+                                                    <el-option label="不限" value="0"></el-option>
+                                                    <el-option label="男" value="1"></el-option>
+                                                    <el-option label="女" value="2"></el-option>
                                                 </el-select>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="12">
-                                            <el-form-item label="菜单优先级"  prop="priority">
-                                                <el-input v-model="formData.priority"/>
+                                            <el-form-item label="生日" prop="birthday">
+                                                <el-col>
+                                                    <el-date-picker type="date" placeholder="选择日期"
+                                                                    v-model="formData.birthday"
+                                                                    style="width: 100%;"></el-date-picker>
+                                                </el-col>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="状态">
+                                                <el-input v-model="formData.station"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="手机号码" prop="telephone">
+                                                <el-input v-model="formData.telephone"/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
                                     <el-row>
                                         <el-col :span="24">
                                             <el-form-item label="描述">
-                                                <el-input v-model="formData.description" type="textarea"></el-input>
+                                                <el-input v-model="formData.remark" type="textarea"></el-input>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
                                 </el-form>
                             </el-tab-pane>
-                            <el-tab-pane label="子菜单" name="second">
+                            <el-tab-pane label="角色信息" name="second">
                                 <div class="checkScrol">
                                     <table class="datatable">
                                         <thead>
                                         <tr>
                                             <th>选择</th>
-                                            <th>菜单名称</th>
-                                            <th>菜单Url</th>
-                                            <th>菜单说明</th>
+                                            <th>角色名称</th>
+                                            <th>角色关键字</th>
+                                            <th>角色描述</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -241,7 +269,7 @@
                                                 <input :id="c.id" v-model="childrenIds" type="checkbox" :value="c.id">
                                             </td>
                                             <td><label :for="c.id">{{c.name}}</label></td>
-                                            <td><label :for="c.id">{{c.linkUrl}}</label></td>
+                                            <td><label :for="c.id">{{c.keyword}}</label></td>
                                             <td><label :for="c.id">{{c.description}}</label></td>
                                         </tr>
                                         </tbody>
@@ -280,10 +308,11 @@
             dialogFormVisible: false,//控制添加窗口显示/隐藏
             dialogFormVisible4Edit: false,//控制编辑窗口显示/隐藏
             rules: {//校验规则
-                name: [{required: true, message: '菜单名不能为空', trigger: 'blur'}],
-                path: [{required: true, message: '菜单路径不能为空', trigger: 'blur'}],
-                icon: [{required: true, message: '性图标不能为空', trigger: 'blur'}],
-                priority: [{required: true, message: '菜单优先级不能为空', trigger: 'blur'}],
+                name: [{required: true, message: '用户名不能为空', trigger: 'blur'}],
+                password: [{required: true, message: '密码不能为空', trigger: 'blur'}],
+                gender: [{required: true, message: '性别不能为空', trigger: 'blur'}],
+                birthday: [{required: true, message: '生日不能为空', trigger: 'blur'}],
+                telephone: [{required: true, message: '手机号码为必填项', trigger: 'blur'}]
             }
         },
         created() {
@@ -296,22 +325,11 @@
             },
             //编辑
             handleEdit() {
-                //先判断是否有选中,如果没有选中检查项则进行提示
-                if (this.childrenIds.length == 0) {
-                    //没有选中,则不提交
-                    //提示
-                    this.$message({
-                        message: "至少选择一个子菜单",
-                        type: 'error'
-                    });
-                    return false
-                }
-
+                //更新检查组
                 this.$refs['editAddForm'].validate((valid) => {
                     if (valid) {
-                        //更新检查组
                         //携带两部分信息进行更新
-                        axios.post("/menu/updateMenu?childrenIds=" + this.childrenIds, this.formData).then(res => {
+                        axios.post("/user/updateUser?childrenIds=" + this.childrenIds, this.formData).then(res => {
                             this.$message({
                                 message: res.data.message,
                                 type: res.data.flag ? 'success' : 'error'
@@ -329,6 +347,7 @@
                         return false;
                     }
                 })
+
 
             },
             //查询时去空格
@@ -351,10 +370,10 @@
                     });
                     return false
                 }
+                //没校验,发送ajax请求
                 this.$refs['dataAddForm'].validate((valid) => {
                     if (valid) {
-                        //没校验,发送ajax请求
-                        axios.post("/menu/saveMenu?childrenIds=" + this.childrenIds, this.formData).then(res => {
+                        axios.post("/user/saveUser?childrenIds=" + this.childrenIds, this.formData).then(res => {
                             this.$message({
                                 message: res.data.message,
                                 type: res.data.flag ? 'success' : 'error'
@@ -370,12 +389,11 @@
                         return false;
                     }
                 })
-
             },
-            //分页查询所有父菜单
+            //分页查询所有用户信息
             findPage() {
                 //发送Ajax请求
-                axios.post("/menu/findAllParentMenu", this.pagination).then(res => {
+                axios.post("/user/findAllUser", this.pagination).then(res => {
                     //处理响应
                     if (res.data.flag) {
                         //查询成功，则将数据赋值到dataList
@@ -404,12 +422,12 @@
                 this.resetForm()
                 //查询所有检查项信息,并显示到弹出框的检查项信息
                 //因为是查询检查项所以要发送到检查项
-                //加载所有检查项
+                //加载所有角色项
                 this.loadChildMenus()
             },
-            //加载所有菜单项
+            //加载所有角色项
             loadChildMenus() {
-                axios.get("/menu/findAllMenus").then(res => {
+                axios.get("/role/findRoles").then(res => {
                     if (res.data.flag) {
                         //查询成功
                         this.tableData = res.data.data
@@ -432,7 +450,7 @@
                 this.resetForm()
                 //发送异步请求进行数据回显
                 //检查组信息回显:查询到检查组信息赋值到formData中
-                axios.get("/menu/findParentMenu/" + id).then(res => {
+                axios.get("/user/findUserById/" + id).then(res => {
                     //处理响应数据回显
                     if (res.data.flag) {
                         //查询成功
@@ -440,7 +458,7 @@
                         //加载所有检查项,以供用户选择
                         this.loadChildMenus()
                         //加载选中的所有检查项,再发送异步请求
-                        axios.get("/menu/findAllCheckedChildMenu/" + id).then(response => {
+                        axios.get("/role/findAllCheckedRoles/" + id).then(response => {
                             if (response.data.flag) {
                                 //查询成功
                                 this.childrenIds = response.data.data
@@ -478,7 +496,7 @@
                     type: 'warning'
                 }).then(() => {
                     //确定删除,则发送请求
-                    axios.post("/menu/deleteMenu/" + id).then(res => {
+                    axios.post("/user/deleteUser/" + id).then(res => {
                         this.$message({
                             message: res.data.message,
                             type: res.data.flag ? 'success' : 'error'

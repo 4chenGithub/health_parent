@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.MenuDao">
+    <!--查询所有菜单集合-->
+    <select id="findAllMenus" resultType="menu">
+       SELECT * FROM t_menuUrl
+    </select>
+
+    <!--分页查询所有父菜单-->
+    <select id="findAllParentMenu" parameterType="string" resultType="Menu">
+        SELECT * FROM t_menu WHERE level=1
+        <if test="value!=null and value.length>0 ">
+            AND name LIKE #{value} OR path = #{value} OR icon LIKE #{value}
+        </if>
+    </select>
+
+    <!--根据path查询父菜单-->
+    <select id="findParentMenuByPath" parameterType="string" resultType="menu">
+        SELECT * FROM t_menu WHERE path=#{path}
+    </select>
+
+    <!--插入父菜单并返回自增长id-->
+    <insert id="saveParentMenu" parameterType="menu">
+        INSERT INTO t_menu(name, linkUrl, path, priority,icon, description, level)
+        VALUES( #{name}, #{linkUrl}, #{path}, #{priority},#{icon}, #{description},1)
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--根据id查询子菜单-->
+    <select id="FindChildMenuById" parameterType="int" resultType="menu">
+        SELECT * FROM  t_menuUrl WHERE id=#{id}
+    </select>
+
+    <!--插入子菜单-->
+    <insert id="saveChildMenu" parameterType="menu">
+        INSERT INTO t_menu(name, linkUrl, path, priority,icon, description, parentMenuId,level)
+        VALUES( #{name}, #{linkUrl}, #{path}, #{priority},#{icon}, #{description},#{parentMenuId},2)
+    </insert>
+    <!--根据id查询当前的菜单是否已经被引用-->
+    <select id="FindMenuCountById" resultType="int" parameterType="int">
+        SELECT  COUNT(0) FROM t_role_menu WHERE menu_id=#{id}
+    </select>
+
+    <!--根据id删除菜单-->
+    <delete id="deleteMenuById" parameterType="int">
+        DELETE FROM t_menu WHERE id=#{id}
+    </delete>
+
+    <!--根据id查询父菜单-->
+    <select id="FindParentMenuById" parameterType="int" resultType="menu">
+        SELECT * FROM t_menu WHERE id=#{id}
+    </select>
+    <!--根据优先级和path-->
+    <select id="findParentMenuByPriority" parameterType="map" resultType="menu">
+        SELECT  * FROM t_menu WHERE priority=#{priority} AND path=#{path}
+     </select>
+    <!--根据parentId查询所有子菜单-->
+    <select id="FindChildMenuByParentId" resultType="menu" parameterType="int">
+        SELECT * FROM  t_menu WHERE parentMenuId=#{id}
+    </select>
+
+    <!--根据linkUrl查询对应的子菜单id-->
+    <select id="FindChildMenuByLinkUrl" parameterType="string" resultType="int">
+        SELECT id FROM t_menuUrl WHERE linkUrl=#{linkUrl}
+    </select>
+
+    <!--根据id删除父菜单下的所有子菜单-->
+    <delete id="deleteChildMenuByParentId" parameterType="int" >
+        DELETE FROM t_menu WHERE parentMenuId=#{id}
+    </delete>
+
+    <!--更新父菜单-->
+    <update id="updateMenu" parameterType="menu">
+      UPDATE t_menu SET name=#{name},icon=#{icon},description=#{description},priority=#{priority} WHERE id=#{id}
+    </update>
+
+</mapper>

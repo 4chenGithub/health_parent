@@ -10,6 +10,8 @@ import java.util.Set;
  * 菜单
  */
 public class Menu implements Serializable{
+
+
     private Integer id;
     private String name; // 菜单名称
     private String linkUrl; // 访问路径

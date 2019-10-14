@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.RoleDao">
+    <!--查询所有角色-->
+    <select id="findRoles" resultType="role">
+       SELECT  * FROM t_role
+    </select>
+
+    <!--查询所有选中的角色列表id集合-->
+    <select id="findAllCheckedRoles" parameterType="int" resultType="int">
+      SELECT role_id FROM t_user_role WHERE user_id=#{id}
+    </select>
+</mapper>

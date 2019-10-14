@@ -28,7 +28,6 @@
         </collection>
     </resultMap>
 
-
     <select id="findUserByUsername" parameterType="string" resultMap="findUserAndRoleAndPermission">
       SELECT tu.*,tr.id rid,tr.name rName,tr.keyword rKeyword,tr.description rDescription,
           tp.id pid ,tp.name pName,tp.keyword pKeyword,tp.description pDescription
@@ -37,4 +36,81 @@
           AND trp.role_id=tr.id AND trp.permission_id=tp.id
           AND tu.username=#{username}
     </select>
+
+    <!--分页查询所有用户信息-->
+    <select id="findAllUser" parameterType="string" resultType="user">
+        SELECT * FROM t_user
+        <if test="value!=null and value.length>0 ">
+            WHERE username LIKE #{value} OR gender = #{value} OR telephone LIKE #{value}
+        </if>
+    </select>
+
+    <!--根据手机号码查询用户-->
+    <select id="findUserByTelephone" resultType="user" parameterType="string">
+    SELECT * FROM t_user WHERE telephone=#{telephone}
+    </select>
+
+    <!--添加用户并获取的自增长的id-->
+    <insert id="AddUser" parameterType="user">
+        INSERT INTO t_user( birthday, gender, username, password, remark, station, telephone)
+        VALUES(#{birthday}, #{gender}, #{username}, #{password}, #{remark}, #{station}, #{telephone})
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--添加用户与角色之间的关系-->
+    <insert id="AddUserAndRole" parameterType="int">
+      INSERT INTO  t_user_role (user_id,role_id)
+      VALUES(#{userId},#{childrenId})
+    </insert>
+
+    <!-- 根据id查询用户-->
+    <select id="findUserById" resultType="user" parameterType="int">
+        SELECT * FROM t_user WHERE id=#{id}
+    </select>
+
+    <!--更新用户信息-->
+    <update id="updateUser" parameterType="user">
+        UPDATE t_user
+        <set>
+            birthday=#{birthday},
+            gender=#{gender},
+            username=#{username},
+            password=#{password},
+            remark=#{remark},
+            station=#{station},
+            telephone=#{telephone}
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <!--删除原有的关系-->
+    <delete id="DeleteUserAndRole" parameterType="int">
+        DELETE  FROM t_user_role WHERE user_id=#{id}
+    </delete>
+
+    <!-- 根据id查询用户与角色的关系集合-->
+    <select id="findUserCountById" parameterType="int" resultType="int">
+        SELECT COUNT(0) FROM t_user_role WHERE user_id=#{id}
+    </select>
+
+    <!--删除用户-->
+    <delete id="deleteUserById" parameterType="int">
+        DELETE FROM t_user WHERE id=#{id}
+    </delete>
+
+    <!--根据用户名查询用户信息-->
+    <select id="findOneUserByUsername" parameterType="string" resultType="user">
+        SELECT  *  FROM t_user WHERE username=#{username}
+    </select>
+
+    <select id="findUserCountByUsername" resultType="int" parameterType="string">
+        SELECT COUNT(0) FROM t_user WHERE username=#{username}
+    </select>
+
+    <select id="findUserCountByTelephone" resultType="int" parameterType="string">
+        SELECT COUNT(0)  FROM t_user WHERE  telephone=#{telephone}
+    </select>
+
 </mapper>
