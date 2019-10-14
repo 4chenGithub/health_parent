@@ -22,4 +22,14 @@ public interface ReportDao {
     List<Map<String, Object>> getPackageReport();
 
 
+    /**
+     * 男女占比
+     */
+    List<Map<String, Object>> findSexCount();
+
+
+    /**
+     * 年龄段占比
+     */
+    List<Map<String, Object>> findAgeCount();
 }

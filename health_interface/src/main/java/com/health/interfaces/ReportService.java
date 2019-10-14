@@ -23,4 +23,17 @@ public interface ReportService {
      */
     Map<String,Object> getBusinessReportData();
 
+
+    /**
+     * 男女占比
+     */
+    List<Map<String, Object>> findSexCount();
+
+
+
+    /**
+     * 年龄段占比
+     */
+    List<Map<String, Object>> findAgeCount();
+
 }

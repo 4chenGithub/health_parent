@@ -67,4 +67,5 @@ public class MessageConstant {
     public static final String SERVER_ERROR = "服务器异常";
     public static final String ALREADY_SEND_VALIDATECODE = "验证码已经发送过了,请注意查收";
     public static final String NEED_VALIDATECODE = "请输入验证码";
+    public static final String GET_SEX_SUCCESS= "获取男女占比成功";
 }

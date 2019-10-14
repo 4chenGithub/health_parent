@@ -62,11 +62,11 @@ public class ReportController {
                 String format = dateFormat1.format(calendar.getTime());
                 months.add(format);
             }
-            TimeTile="上一年度会员数量";
+            TimeTile = "上一年度会员数量";
         } else {
             //如果不是,说明有数据
             if (StringUtil.isNotEmpty(timeStart) && StringUtil.isNotEmpty(timeEnd)) {
-                TimeTile=timeStart+"到"+timeEnd+"的会员数量";
+                TimeTile = timeStart + "到" + timeEnd + "的会员数量";
                 try {
                     Date endDate = dateFormat1.parse(timeEnd);
                     Date startDate = dateFormat1.parse(timeStart);
@@ -229,12 +229,12 @@ public class ReportController {
         //通知浏览器弹框
         //生成文件唯一标识符
         String preFile = UUID.randomUUID().toString();
-        String endFile="运营统计数据";
+        String endFile = "运营统计数据";
         //endFile = Base64.getUrlEncoder().encodeToString(endFile.getBytes());
 //        endFile= URLEncoder.encode(endFile,"ISO-8859-1");
         // 解决乱码?
-        endFile = new String(endFile.getBytes(),"ISO-8859-1");
-        response.setHeader("Content-Disposition", "attachment;filename=" + preFile + endFile+".xlsx");
+        endFile = new String(endFile.getBytes(), "ISO-8859-1");
+        response.setHeader("Content-Disposition", "attachment;filename=" + preFile + endFile + ".xlsx");
         workbook.write(os);
         //关闭资源
         os.flush();
@@ -244,7 +244,7 @@ public class ReportController {
 
 
     @RequestMapping("/exportBusinessReport2")
-    public void exportBusinessReport2(HttpServletRequest req, HttpServletResponse res){
+    public void exportBusinessReport2(HttpServletRequest req, HttpServletResponse res) {
         String template = req.getSession().getServletContext().getRealPath("template") + File.separator + "report_template2.xlsx";
         // 数据模型
         Context context = new PoiContext();
@@ -253,11 +253,60 @@ public class ReportController {
             res.setContentType("application/vnd.ms-excel");
             res.setHeader("content-Disposition", "attachment;filename=report2.xlsx");
             // 把数据模型中的数据填充到文件中
-            JxlsHelper.getInstance().processTemplate(new FileInputStream(template),res.getOutputStream(),context);
+            JxlsHelper.getInstance().processTemplate(new FileInputStream(template), res.getOutputStream(), context);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
+    /**
+     * 男女占比
+     */
+    @GetMapping("/getSex")
+    public Result getSex() {
+        //查询男女占比
+        //Map<String,Object>
+        //{value:7, name:'男'}  value:数量  name:性别男
+        //{value:8, name:'女'}  value:数量  name:性别女
+        List<Map<String, Object>> sexCount = reportService.findSexCount();
+        //组装套餐列表数据
+        List<String> sexNames = new ArrayList<>();
+        if (null != sexCount) {
+            for (Map<String, Object> map : sexCount) {
+                sexNames.add((String) map.get("name"));
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("sexNames", sexNames);
+        result.put("sexCount", sexCount);
+        return new Result(true, MessageConstant.GET_SEX_SUCCESS, result);
+
+    }
+
+    /**
+     * 年龄段占比
+     */
+    @GetMapping("/getMemberAge")
+    public Result getMemberAge() {
+        //查询男女占比
+        //Map<String,Object>
+        //{value:7, name:'男'}  value:数量  name:性别男
+        //{value:8, name:'女'}  value:数量  name:性别女
+        List<Map<String, Object>> ageCount = reportService.findAgeCount();
+        //组装套餐列表数据
+        List<String> memberAges = new ArrayList<>();
+        if (null != ageCount) {
+            for (Map<String, Object> map : ageCount) {
+                memberAges.add((String) map.get("name"));
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("memberAges", memberAges);
+        result.put("ageCount", ageCount);
+        return new Result(true, MessageConstant.GET_SEX_SUCCESS, result);
+
+    }
 }
