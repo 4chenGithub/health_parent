@@ -2,8 +2,11 @@ package com.health.dao;
 
 
 import com.github.pagehelper.Page;
+import com.health.pojo.Menu;
 import com.health.pojo.User;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface UserDao {
     /**
@@ -93,4 +96,15 @@ public interface UserDao {
      * @return
      */
     Integer findUserCountByTelephone(String telephone);
+
+    /**
+     * 根据用户名获取对应的菜单集合
+     * @param name
+     * @return
+     */
+    List<Menu> findAllMenuByUsername(String name);
+
+
+    //    查询用户所有信息
+    List<User> findAll();
 }

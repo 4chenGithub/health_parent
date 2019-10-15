@@ -45,14 +45,14 @@
     </security:http>
 
     <!--认证管理器-->
-  <!--  <security:authentication-manager>
+    <security:authentication-manager>
         <security:authentication-provider user-service-ref="securityUserService">
              <security:password-encoder ref="bCryptPasswordEncoder"/>
         </security:authentication-provider>
-    </security:authentication-manager>-->
+    </security:authentication-manager>
 
     <!--将实现类加载到核心容器-->
-    <!--<bean id="securityUserService" class="com.itheima.security.SpringSecurityUserServiceImpl"/>-->
+    <bean id="securityUserService" class="com.health.security.SpringSecurityUserServiceImpl"/>
 
     <!--配置密码加密对象-->
     <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>

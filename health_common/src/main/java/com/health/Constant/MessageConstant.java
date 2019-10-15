@@ -63,6 +63,7 @@ public class MessageConstant {
     public static final String GET_BUSINESS_REPORT_SUCCESS = "获取运营统计数据成功";
     public static final String GET_BUSINESS_REPORT_FAIL = "获取运营统计数据失败";
     public static final String GET_SETMEAL_LIST_SUCCESS = "查询套餐列表数据成功";
+    public static final String EDIT_PACKAGE_SUCCESS = "编辑套餐数据成功";
     public static final String GET_SETMEAL_LIST_FAIL = "查询套餐列表数据失败";
     public static final String SERVER_ERROR = "服务器异常";
     public static final String ALREADY_SEND_VALIDATECODE = "验证码已经发送过了,请注意查收";
@@ -91,4 +92,28 @@ public class MessageConstant {
     public static final String EDIT_USER_FAIL = "编辑用户失败";
     public static final String DELETE_USER_SUCCESS = "删除用户成功";
     public static final String GET_SEX_SUCCESS= "获取男女占比成功";
+    public static final String GET_MENUS_SUCCESS= "获取菜单成功";
+    public static final String GET_MENUS_FAIL= "获取菜单失败";
+
+    public static final String DELETE_PACKAGE_SUCCESS = "删除套餐成功";
+    public static final String DELETE_PACKAGE_FAIL = "删除套餐失败";
+    public static final String PACKAGE_ID_IS_USED = "套餐ID已被引用";
+
+
+    public static final String DELETE_ROLE_SUCCESS = "删除角色成功";
+    public static final String DELETE_ROLE_FAIL = "删除角色失败";
+    public static final String DELETE_PERMISSION_FAIL = "删除权限失败";
+    public static final String DELETE_PERMISSION_SUCCESS = "删除权限成功";
+    public static final String ADD_ROLE_SUCCESS = "新增角色成功";
+    public static final String ADD_ROLE_FAIL = "新增角色失败";
+    public static final String ADD_PERMISSION_FAIL = "新增权限失败";
+    public static final String ADD_PERMISSION_SUCCESS = "新增权限成功";
+    public static final String GET_ROLE_SUCCESS = "获取角色信息成功";
+    public static final String GET_PERMISSION_SUCCESS = "获取权限信息成功";
+    public static final String GET_PERMISSION_FAIL = "获取权限信息失败";
+    public static final String GET_ROLE_FAIL = "获取角色信息失败";
+    public static final String EDIT_PERMISSION_SUCCESS = "编辑权限成功";
+    public static final String EDIT_PERMISSION_FAIL = "编辑权限失败";
+    public static final String EDIT_ROLE_SUCCESS = "编辑角色成功";
+    public static final String EDIT_ROLE_FAIL = "编辑角色失败";
 }

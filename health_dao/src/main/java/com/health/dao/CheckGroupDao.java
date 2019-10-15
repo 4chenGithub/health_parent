@@ -10,7 +10,6 @@ import java.util.Map;
 
 public interface CheckGroupDao {
 
-
     void saveCheckGroup(CheckGroup checkGroup);
 
     void saveCheckGroupAndCheckItems(Map<String, Integer> map);

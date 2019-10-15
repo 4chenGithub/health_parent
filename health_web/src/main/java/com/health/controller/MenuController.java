@@ -7,10 +7,7 @@ import com.health.Entity.QueryPageBean;
 import com.health.Entity.Result;
 import com.health.interfaces.MenuService;
 import com.health.pojo.Menu;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -128,4 +125,12 @@ public class MenuController {
 
         return new Result(false, MessageConstant.EDIT_MENU_FAIL);
     }
+
+    //    查询所有菜单信息
+    @GetMapping("/findAllMenu")
+    public Result findAll(){
+        List<Menu> menuList=menuService.findAll();
+        return new Result(true, MessageConstant.QUERY_MENUS_SUCCESS,menuList);
+    }
+
 }

@@ -98,7 +98,7 @@
                 //提示操作结果
                 this.$message({
                     message: response.data.message,
-                    type: response.data.flag = true ? 'success' : 'error'
+                    type: response.data.flag ? 'success' : 'error'
                 });
                 if (response.data.flag) {
                     //查询成功则赋值展示

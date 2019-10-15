@@ -5,9 +5,11 @@ import com.health.Entity.PageResult;
 import com.health.Entity.QueryPageBean;
 import com.health.Exception.TelephoneIsExistException;
 import com.health.Exception.UsernameBeUseException;
+import com.health.pojo.Menu;
 import com.health.pojo.User;
 
 import javax.validation.Valid;
+import java.util.List;
 
 public interface UserService {
     /**
@@ -56,4 +58,15 @@ public interface UserService {
      * @param id
      */
     void deleteUser(Integer id);
+
+    /**
+     * 根据用户名获取对应的菜单集合
+     * @param name
+     * @return
+     */
+    List<Menu> findAllMenuByUsername(String name);
+
+    //    查询用户所有信息
+    List<User> findAll();
+
 }

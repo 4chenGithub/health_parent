@@ -11,6 +11,7 @@
     <bean id="myQuartz" class="com.health.job.MyQuartz"/>
 
     <!--注册任务策略器-->
+    <!--任务一-->
     <!-- 注册JobDetail,作用是负责通过反射调用指定的Job -->
     <bean id="jobDetail"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -18,6 +19,7 @@
         <property name="targetObject" ref="myQuartz"/>
         <!-- 注入任务类方法名 -->
         <property name="targetMethod" value="deletePhoto"/>
+
     </bean>
 
     <!-- 注册一个触发器，指定任务触发的时间 -->
@@ -27,7 +29,22 @@
         <!-- 指定触发的时间，基于Cron表达式 -->
         <property name="cronExpression">
             <!--秒 分 时 日 月 周 年:每天晚上12点-->
-            <value>0 0 0 * * ?</value>
+            <value>0/10 * * * * ? *</value>
+        </property>
+    </bean>
+
+    <!--任务二-->
+    <!-- 注册JobDetail,作用是负责通过反射调用指定的Job -->
+    <bean id="jobDetail_2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="myQuartz"/>
+        <property name="targetMethod" value="getBusinessReportData"/>
+    </bean>
+
+    <!-- 注册一个触发器，指定任务触发的时间 -->
+    <bean id="myTrigger_2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="jobDetail_2"/>
+        <property name="cronExpression">
+            <value>0/10 * * * * ? *</value>
         </property>
     </bean>
 
@@ -36,10 +53,13 @@
         <!-- 可以注入多个触发器 -->
         <property name="triggers">
             <list>
+                <ref bean="myTrigger_2"/>
+                <!--添加任务二的调度任务-->
                 <ref bean="myTrigger"/>
             </list>
         </property>
     </bean>
 
     <import resource="classpath:spring-redis.xml"/>
+    <import resource="classpath:spring-job.xml"/>
 </beans>

@@ -3,6 +3,7 @@ package com.health.controller;
 import com.health.Constant.MessageConstant;
 import com.health.Entity.Result;
 import com.health.Exception.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -39,6 +40,12 @@ public class MyExceptionInterceptor extends RuntimeException {
         return new Result(false, e.getMessage());
     }
 
+    //无访问权限
+    @ExceptionHandler(AccessDeniedException.class)
+    public Result UnAccessExceptionInterceptor(AccessDeniedException e) {
+        e.printStackTrace();
+        return new Result(false, "无访问权限");
+    }
     //手机号码已经存在
     @ExceptionHandler(TelephoneIsExistException.class)
     public Result TelephoneIsExistExceptionInterceptor(TelephoneIsExistException e) {
@@ -46,6 +53,13 @@ public class MyExceptionInterceptor extends RuntimeException {
         return new Result(false, e.getMessage());
     }
 
+    //
+    //套餐ID已被引用
+    @ExceptionHandler(PackageBeUseException.class)
+    public Result PackageBeUseExceptionInterceptor(PackageBeUseException e) {
+        e.printStackTrace();
+        return new Result(false, e.getMessage());
+    }
 
     //拦截controller抛出的其他异常
     @ExceptionHandler(Exception.class)

@@ -126,8 +126,8 @@
                 <el-table-column prop="remark" label="说明" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="primary" size="mini">编辑</el-button>
-                        <el-button size="mini" type="danger">删除</el-button>
+                        <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+                        <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -261,6 +261,128 @@
                     </div>
                 </el-dialog>
             </div>
+
+            <!-- 编辑标签弹层 -->
+            <div class="add-form">
+                <el-dialog title="新增套餐" :visible.sync="dialogFormVisible4Edit">
+                    <template>
+                        <el-tabs v-model="activeName" type="card">
+                            <el-tab-pane label="基本信息" name="first">
+                                <el-form label-position="right" label-width="100px">
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="编码">
+                                                <el-input v-model="formData.code"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="名称">
+                                                <el-input v-model="formData.name"/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="适用性别">
+                                                <el-select v-model="formData.sex">
+                                                    <el-option label="不限" value="0"></el-option>
+                                                    <el-option label="男" value="1"></el-option>
+                                                    <el-option label="女" value="2"></el-option>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="助记码">
+                                                <el-input v-model="formData.helpCode"/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="套餐价格">
+                                                <el-input v-model="formData.price"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="适用年龄">
+                                                <el-input v-model="formData.age"/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="上传图片">
+                                                <!--action:表示提交的图片的路劲
+                                                auto-upload:为true时,表示上传后自动发请求到指定的路径
+                                                name属性:此属性名与controller的变量名必须一致
+                                                on-success:上传成功回调函数
+                                                before-upload:上传成功,但是还未发送时的回调函数,此时可以用于校验上传的文件是否符合要求
+                                                如果不符合,则终止提交到后台
+                                                imageUrl:表示上传成功后,要返回的图片路径,此时的路径应该能直接访问到七牛云
+                                                -->
+                                                <el-upload
+                                                        class="avatar-uploader"
+                                                        action="/package/upload"
+                                                        :auto-upload="autoUpload"
+                                                        name="imgFile"
+                                                        :show-file-list="false"
+                                                        :on-success="handleAvatarSuccess"
+                                                        :before-upload="beforeAvatarUpload">
+                                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                                </el-upload>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="说明">
+                                                <el-input v-model="formData.remark" type="textarea"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="注意事项">
+                                                <el-input v-model="formData.attention" type="textarea"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form>
+                            </el-tab-pane>
+                            <el-tab-pane label="检查组信息" name="second">
+                                <div class="checkScrol">
+                                    <table class="datatable">
+                                        <thead>
+                                        <tr>
+                                            <th>选择</th>
+                                            <th>项目编码</th>
+                                            <th>项目名称</th>
+                                            <th>项目说明</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="c in tableData">
+                                            <td>
+                                                <input :id="c.id" v-model="checkgroupIds" type="checkbox" :value="c.id">
+                                            </td>
+                                            <td><label :for="c.id">{{c.code}}</label></td>
+                                            <td><label :for="c.id">{{c.name}}</label></td>
+                                            <td><label :for="c.id">{{c.remark}}</label></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                        <el-button type="primary" @click="handleEdit()">确定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
+
         </div>
     </div>
 </div>
@@ -283,7 +405,8 @@
             formData: {},//表单数据
             tableData: [],//添加表单窗口中检查组列表数据
             checkgroupIds: [],//添加表单窗口中检查组复选框对应id
-            dialogFormVisible: false//控制添加窗口显示/隐藏
+            dialogFormVisible: false,//控制添加窗口显示/隐藏
+            dialogFormVisible4Edit: false,//修改表单是否可见，即是否弹出修改窗口
         },
         created() {
             this.findPage();
@@ -295,6 +418,11 @@
                 this.dialogFormVisible = true
                 //清空表单
                 this.resetForm()
+                //查询所有检查组
+                this.loadCheckGroup()
+            },
+            //加载所有检查组信息
+            loadCheckGroup() {
                 //发送ajax请求到checkGroupController
                 axios.get("/checkGroup/findAll").then(res => {
                     this.$message({
@@ -307,17 +435,14 @@
                     }
 
                 })
-
             },
             // 重置表单
             resetForm() {
                 //清空表单
                 this.formData = {}
-                //清空列表
-                this.dataList = []
                 //清空选中的列表项
                 this.tableData = []
-                this.checkgroupIds=[]
+                this.checkgroupIds = []
                 //选中第一个窗口
                 this.activeName = "first"
             },
@@ -335,7 +460,7 @@
                 axios.post("/package/addPackage?checkgroupIds=" + this.checkgroupIds, this.formData).then(res => {
                     this.$message({
                         message: res.data.message,
-                        type: res.data.flag  ? 'success' : 'error'
+                        type: res.data.flag ? 'success' : 'error'
                     });
                     if (res.data.flag) {
                         //成功,关闭窗口,并刷新页面
@@ -350,8 +475,11 @@
             search() {
                 //设置当前页为1
                 this.pagination.currentPage = 1
-                //对查询条件进行去空格处理
-                this.pagination.queryString = (this.pagination.queryString).trim()
+                if (this.pagination.queryString != null) {
+                    //对查询条件进行去空格处理
+                    this.pagination.queryString = $.trim(this.pagination.queryString)
+                    /* this.pagination.queryString = ().trim()*/
+                }
                 this.findPage()
             },
             //分页查询
@@ -359,12 +487,12 @@
                 axios.post("/package/findAllPage", this.pagination).then(res => {
                     this.$message({
                         message: res.data.message,
-                        type: res.data.flag  ? 'success' : 'error'
+                        type: res.data.flag ? 'success' : 'error'
                     });
-                    if (res.data.flag){
+                    if (res.data.flag) {
                         //查询成功
-                        this.dataList=res.data.data.pageList
-                        this.pagination.total=res.data.data.total
+                        this.dataList = res.data.data.pageList
+                        this.pagination.total = res.data.data.total
                     }
                 })
             },
@@ -373,7 +501,7 @@
                 //注意此时response不需要再加data.elementUI已经封装好了
                 this.$message({
                     message: response.message,
-                    type: response.flag   ? 'success' : 'error'
+                    type: response.flag ? 'success' : 'error'
                 });
                 if (response.flag) {
                     //上传成功
@@ -398,8 +526,85 @@
             },
             //切换页码
             handleCurrentChange(currentPage) {
-                this.pagination.currentPage=currentPage
+                this.pagination.currentPage = currentPage
                 this.findPage()
+            },
+            //点击编辑进行数据回显
+            handleUpdate(row) {
+                //获取当前检查项的id值
+                var id = row.id
+                //弹出修改窗口
+                this.dialogFormVisible4Edit = true
+                //清空窗口的数据
+                this.resetForm()
+                //加载所有检查组
+                this.loadCheckGroup()
+                //发送ajax请求,根据id获取当前的id对象以及选中的集合
+                axios.get("/package/findById/" + id).then(res => {
+                    //处理响应
+                    if (res.data.flag) {
+                        //查询成功
+                        this.formData = res.data.data.package
+                        this.imageUrl ="http://pybd7dwsq.bkt.clouddn.com/"+ res.data.data.package.img
+                        this.checkgroupIds = res.data.data.checkGroupIds
+                    } else {
+                        //查询失败
+                        this.$message({
+                            message: res.data.message,
+                            type: 'error'
+                        });
+                    }
+                }).catch(r => {//失败时回调函数
+                    this.showMessage(r)
+                })
+            },
+            //点击确定修改
+            handleEdit() {
+                //进行非空判断
+                if (this.checkgroupIds.length == 0) {
+                    //如果为空,则进行提示,并终止发送
+                    this.$message({
+                        message: "至少选择一项检查组",
+                        type: 'error'
+                    });
+                    return false
+                }
+                //发送请求更新套餐数据
+                axios.post("/package/updatePackage?checkgroupIds=" + this.checkgroupIds, this.formData).then(res => {
+                    this.$message({
+                        message: res.data.message,
+                        type: res.data.flag ? 'success' : 'error'
+                    });
+                    if (res.data.flag) {
+                        //修改成功
+                        this.dialogFormVisible4Edit=false
+                        this.findPage()
+                    }
+                })
+            },
+            //删除
+            handleDelete(row) {
+                var id = row.id
+                //提示是否删除,防止误操作删除
+                this.$confirm('此操作将[永久删除]该项, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //确定删除,则发送请求
+                    axios.post("/package/deletePackage/" + id).then(res => {
+                        this.$message({
+                            message: res.data.message,
+                            type: res.data.flag  ? 'success' : 'error'
+                        });
+                        if (res.data.flag) {
+                            //删除成功,删除页面
+                            this.findPage()
+                        }
+                    })
+                }).catch(() => {
+                    //取消删除,这里不做任何操作
+                });
             }
         }
     })

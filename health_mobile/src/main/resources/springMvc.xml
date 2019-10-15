@@ -13,7 +13,7 @@
     <!--配置dubbo-->
     <dubbo:application name="spring_mobile"/>
     <dubbo:registry address="zookeeper://localhost:2181"/>
-    <dubbo:annotation package="com.itheima.controller"/>
+    <dubbo:annotation package="com.health.controller"/>
 
     <dubbo:consumer timeout="600000" check="false"/>
 

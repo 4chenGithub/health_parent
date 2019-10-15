@@ -101,6 +101,7 @@ public interface MenuDao {
      */
     Menu findParentMenuByPriority(Map<String,Object> map);
 
-
+    //    查询所有菜单信息
+    List<Menu> findAll();
 
 }

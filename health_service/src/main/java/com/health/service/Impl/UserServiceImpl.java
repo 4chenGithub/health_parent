@@ -7,21 +7,21 @@ import com.github.pagehelper.StringUtil;
 import com.health.Entity.PageResult;
 import com.health.Entity.QueryPageBean;
 import com.health.Exception.TelephoneIsExistException;
-import com.health.Exception.UserIdBeUseException;
 import com.health.Exception.UsernameBeUseException;
 import com.health.dao.UserDao;
 import com.health.interfaces.UserService;
 import com.health.pojo.Menu;
 import com.health.pojo.User;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service(interfaceClass = UserService.class)
 public class UserServiceImpl implements UserService {
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
 
     @Autowired
     private UserDao userDao;
@@ -173,6 +173,23 @@ public class UserServiceImpl implements UserService {
         userDao.deleteUserById(id);
     }
 
+    /**
+     * 根据用户名获取对应的菜单集合
+     * @param name
+     * @return
+     */
+    @Override
+    public List<Menu> findAllMenuByUsername(String name) {
+        return userDao.findAllMenuByUsername(name);
+    }
+
+
+    //    查询用户所有信息
+    @Override
+    public List<User> findAll() {
+        List<User> userList= userDao.findAll();
+        return userList;
+    }
     public static void main(String[] args) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         //加密

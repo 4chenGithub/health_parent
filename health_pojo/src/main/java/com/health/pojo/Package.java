@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class Package implements Serializable {
 
-
     private Integer id;
     private String name;
     private String code;

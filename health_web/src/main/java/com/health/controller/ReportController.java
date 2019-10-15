@@ -2,19 +2,26 @@ package com.health.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.StringUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.health.Constant.MessageConstant;
+import com.health.Constant.RedisConstant;
 import com.health.Entity.Result;
 import com.health.interfaces.ReportService;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jxls.common.Context;
 import org.jxls.transform.poi.PoiContext;
 import org.jxls.util.JxlsHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +39,8 @@ import java.util.*;
 public class ReportController {
     @Reference
     private ReportService reportService;
+    @Autowired
+    private JedisPool jedisPool;
 
     /**
      * 查询从当前月份开始到过去的12个月的集合和每个月的会员数量集合
@@ -116,12 +125,26 @@ public class ReportController {
 
     /**
      * 统计当月运营
-     *
+     * 使用redis提前统计运营数据，并存到redis数据库中，下次需要则直接从redis中获取，能提高效率
      * @return
      */
     @RequestMapping("/getBusinessReportData")
     public Result getBusinessReportData() {
-        Map<String, Object> map = reportService.getBusinessReportData();
+        //先从redis中数据库中
+        Jedis jedis = jedisPool.getResource();
+        Gson gson = new Gson();
+        String BusinessReportDataJson = jedis.get(RedisConstant.BUSINESS_DATA_RESOURCES);
+        Map<String, Object> map = gson.fromJson(BusinessReportDataJson, new TypeToken<Map<String, Object>>() {
+        }.getType());
+
+        //判断从redis中获取的是否为空，为空，说明第一次获取，则从MySQL数据库中查询到，并存到redis中
+        if (map == null) {
+            map = reportService.getBusinessReportData();
+            String json = gson.toJson(map);
+            jedis.set(RedisConstant.BUSINESS_DATA_RESOURCES, json);
+        }
+        //关闭资源
+        jedis.close();
         return new Result(true, MessageConstant.GET_BUSINESS_REPORT_SUCCESS, map);
     }
 

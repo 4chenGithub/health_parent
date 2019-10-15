@@ -12,4 +12,73 @@
     <select id="findAllCheckedRoles" parameterType="int" resultType="int">
       SELECT role_id FROM t_user_role WHERE user_id=#{id}
     </select>
+
+
+    <!--查询角色所有信息-->
+    <select id="findAll" resultType="role">
+        select * from t_role
+    </select>
+    <!--保存角色信息-->
+    <insert id="addRole" parameterType="role">
+        <selectKey keyProperty="id" resultType="int" keyColumn="id" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into t_role values(null,#{name},#{keyword},#{description})
+    </insert>
+    <!--保存用户角色关系-->
+    <insert id="addUR" parameterType="int">
+        insert into t_user_role values(#{userId},#{rid})
+    </insert>
+    <!--保存权限角色关系-->
+    <insert id="addRP" parameterType="int">
+        insert into t_role_permission values(#{rid},#{permissionId})
+    </insert>
+    <!--保存菜单角色关系-->
+    <insert id="addRM" parameterType="int">
+        insert into t_role_menu values(#{rid},#{menuId})
+    </insert>
+    <!--使用分页插件-->
+    <select id="findPage" parameterType="string" resultType="role">
+        select * from t_role
+        <if test="value!=null and value.length>0">
+            where name like #{value} or keyword like #{value}
+        </if>
+    </select>
+    <!-- 获取用户角色关系-->
+    <select id="findRoleById" parameterType="int" resultType="role">
+        select * from t_role where id=#{value}
+    </select>
+    <!--获取用户角色关系-->
+    <select id="findURIds" parameterType="int" resultType="int">
+        select user_id from t_user_role where role_id=#{value}
+    </select>
+    <!--获取角色权限关系-->
+    <select id="findRPIds" parameterType="int" resultType="int">
+        select permission_id from t_role_permission where role_id=#{value}
+    </select>
+    <!--获取角色菜单关系-->
+    <select id="findRMIds" parameterType="int" resultType="int">
+        select menu_id from t_role_menu where role_id=#{value}
+    </select>
+    <!--更新角色基本信息-->
+    <update id="updateRole" parameterType="role" >
+        update t_role set name=#{name},keyword=#{keyword},description=#{description} where id=#{id}
+    </update>
+    <!--删除用户角色关系-->
+    <delete id="delUR" parameterType="int">
+        delete from t_user_role where role_id=#{value}
+    </delete>
+    <!--删除角色权限关系-->
+    <delete id="delRP" parameterType="int">
+        delete from t_role_permission where role_id=#{value}
+    </delete>
+    <!--删除角色菜单关系-->
+    <delete id="delRM" parameterType="int">
+        delete from t_role_menu where role_id=#{value}
+    </delete>
+    <!--删除角色-->
+    <delete id="delRole" parameterType="int">
+        delete from t_role where id=#{value}
+    </delete>
+
 </mapper>

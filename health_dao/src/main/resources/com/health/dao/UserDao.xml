@@ -104,13 +104,54 @@
     <select id="findOneUserByUsername" parameterType="string" resultType="user">
         SELECT  *  FROM t_user WHERE username=#{username}
     </select>
-
+    <!--根据用户名统计用户数量-->
     <select id="findUserCountByUsername" resultType="int" parameterType="string">
         SELECT COUNT(0) FROM t_user WHERE username=#{username}
     </select>
-
+    <!--根据手机号码统计用户数量-->
     <select id="findUserCountByTelephone" resultType="int" parameterType="string">
         SELECT COUNT(0)  FROM t_user WHERE  telephone=#{telephone}
+    </select>
+    <!--自定义映射规则-->
+    <resultMap id="findAllMenuByUsername" type="menu">
+        <id column="BigId" property="id"/>
+        <result column="BigName" property="name"/>
+        <result column="BigPath" property="path"/>
+        <result column="BigPriority" property="priority"/>
+        <result column="BigIcon" property="icon"/>
+        <collection property="children" ofType="menu">
+            <id column="SmId" property="id"/>
+            <result column="SmName" property="name"/>
+            <result column="SmLinkUrl" property="linkUrl"/>
+            <result column="SmPath" property="path"/>
+            <result column="SmPriority" property="priority"/>
+            <result column="SmParentMenuId" property="parentMenuId"/>
+        </collection>
+    </resultMap>
+    <!--根据用户名查询对应的菜单集合-->
+    <select id="findAllMenuByUsername" parameterType="string" resultMap="findAllMenuByUsername">
+      SELECT
+      tm.id BigId,
+      tm.name BigName,
+      tm.path BigPath,
+      tm.priority BigPriority,
+      tm.icon  BigIcon ,
+      tm2.id SmId,
+      tm2.name SmName,
+      tm2.linkUrl SmLinkUrl,
+      tm2.path SmPath,
+      tm2.priority SmPriority,
+      tm2.parentMenuId SmParentMenuId
+        FROM t_user tu,t_role tr,t_user_role tur,t_menu tm,t_role_menu trm,t_menu tm2
+        WHERE  tu.id=tur.`user_id` AND tr.`id`=tur.`role_id` AND trm.`role_id`=tr.`id`
+               AND trm.`menu_id`=tm.`id` AND tm.id=tm2.`parentMenuId`
+               AND tu.username=#{username} ORDER BY tm.`path`,tm2.`path`
+    </select>
+
+
+    <!--查询用户所有信息-->
+    <select id="findAll" resultType="user">
+        select * from t_user
     </select>
 
 </mapper>

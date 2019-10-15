@@ -56,4 +56,7 @@ public interface MenuService {
      * @param childrenIds
      */
     void updateMenu( Menu menu, Integer[] childrenIds);
+
+    //    查询所有菜单信息
+    List<Menu> findAll();
 }

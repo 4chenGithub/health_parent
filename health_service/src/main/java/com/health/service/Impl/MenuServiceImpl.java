@@ -81,9 +81,9 @@ public class MenuServiceImpl implements MenuService {
         }
 
         //判断当前的优先级是否已经存在
-        Map<String,Object> map=new HashMap<>();
-        map.put("path",menu.getPath());
-        map.put("priority",menu.getPriority());
+        Map<String, Object> map = new HashMap<>();
+        map.put("path", menu.getPath());
+        map.put("priority", menu.getPriority());
         menu1 = menuDao.findParentMenuByPriority(map);
         if (menu1 != null) {
             throw new PriorityBeUseException("优先级已经存在");
@@ -188,9 +188,9 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     @Override
     public void updateMenu(Menu menu, Integer[] childrenIds) throws PriorityBeUseException {
-        Map<String,Object> map=new HashMap<>();
-        map.put("priority",menu.getPriority());
-        map.put("path",menu.getPath());
+        Map<String, Object> map = new HashMap<>();
+        map.put("priority", menu.getPriority());
+        map.put("path", menu.getPath());
         //判断优先级已经存在
         Menu Menu2 = menuDao.findParentMenuByPriority(map);
         if (Menu2 != null) {
@@ -211,4 +211,10 @@ public class MenuServiceImpl implements MenuService {
         }
     }
 
+    //    查询所有菜单信息
+    @Override
+    public List<Menu> findAll() {
+        List<Menu> menuList = menuDao.findAll();
+        return menuList;
+    }
 }

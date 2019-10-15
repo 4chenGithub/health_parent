@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.PermissionDao">
+    <!--保存新建权限基本信息-->
+    <insert id="addPermission" parameterType="permission" >
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into t_permission VALUES (null,#{name},#{keyword},#{description})
+    </insert>
+    <!--保存权限角色关系-->
+    <insert id="addPR" parameterType="int">
+        insert into t_role_permission values (#{roleId},#{permissionId})
+    </insert>
+    <!--获取权限列表数据-->
+    <select id="findPage" parameterType="string" resultType="permission">
+        select * from t_permission
+        <if test="value!=null and value.length>0">
+            where name like #{value} or keyword like #{value}
+        </if>
+    </select>
+    <!--获取权限基本信息-->
+    <select id="findPermission" parameterType="int" resultType="permission">
+        select * from t_permission where id=#{value}
+    </select>
+    <!--获取权限角色关系-->
+    <select id="findRPIDs" parameterType="int" resultType="int">
+        select role_id from t_role_permission where permission_id =#{value}
+    </select>
+    <!--更新权限基本信息-->
+    <update id="updatePermission" parameterType="permission">
+        update  t_permission set name=#{name},keyword=#{keyword},description=#{description} where id=#{id}
+    </update>
+    <!--删除角色权限关系-->
+    <delete id="delRP" parameterType="int">
+        delete from t_role_permission where permission_id=#{value}
+    </delete>
+    <!--删除权限基本信息-->
+    <delete id="deletePermission" parameterType="int">
+        delete from t_permission where id=#{value}
+    </delete>
+    <!--查询所有权限-->
+    <select id="findAll" resultType="permission">
+        select * from t_permission
+    </select>
+</mapper>

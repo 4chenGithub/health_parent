@@ -87,7 +87,7 @@
             //定义登陆用户名的数据模型
             username: "jay",
             menuList: [
-                {
+              /*  {
                     "path": "1",
                     "title": "工作台",
                     "icon": "el-icon-edit",
@@ -184,12 +184,12 @@
                             "title": "套餐预约统计",
                             "linkUrl": "report_package.html",
                             "children": []
-                        },{
+                        }, {
                             "path": "/5-4",
                             "title": "男女会员占比",
                             "linkUrl": "report_sex.html",
                             "children": []
-                        },{
+                        }, {
                             "path": "/5-5",
                             "title": "年龄段占比",
                             "linkUrl": "report_age.html",
@@ -200,7 +200,7 @@
                 {
                     "path": "6",
                     "title": "超级管理",
-                    "icon": "el-icon-eleme",
+                    "icon": "fa-tty",
                     "children": [
                         {
                             "path": "/6-3",
@@ -215,8 +215,12 @@
                             "children": []
                         }
                     ]
-                }
+                }*/
             ]
+        },
+        created() {
+            this.getUserName()
+            this.getMenuList()
         },
         methods: {
             //发送ajax请求获取登陆的用户名
@@ -231,13 +235,23 @@
                         });
                     }
                 })
-            }
-        },
-        created() {
-           /* this.getUserName()*/
-        },
-    })
-    ;
+            },
+            //发送Ajax请求获取菜单集合
+            getMenuList() {
+                axios.get("/user/getMenuList").then(res => {
+                    if (res.data.flag) {
+                        this.menuList = res.data.data
+                    } else {
+                        this.$message({
+                            message: res.data.message,
+                            type: 'error'
+                        });
+                    }
+                })
+            },
+        }
+    });
+
     $(function () {
         var wd = 200;
         $(".el-main").css('width', $('body').width() - wd + 'px');

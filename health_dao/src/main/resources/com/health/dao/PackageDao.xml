@@ -13,15 +13,16 @@
         </selectKey>
     </insert>
 
+    <!--添加套餐与检查组的关系-->
     <insert id="AddPackageAndCheckGroup" parameterType="int">
         INSERT INTO t_package_checkGroup VALUES (#{id},#{checkgroupId})
     </insert>
 
     <select id="findAllPage" parameterType="string" resultType="package">
-      SELECT * FROM t_package
-      <if test="value !=null and value.length>0 ">
-          WHERE code LIKE #{value} OR name LIKE #{value} OR helpCode LIKE #{value}
-      </if>
+        SELECT * FROM t_package
+        <if test="value !=null and value.length>0 ">
+            WHERE code LIKE #{value} OR name LIKE #{value} OR helpCode LIKE #{value}
+        </if>
     </select>
 
     <select id="findAllPackage" resultType="Package">
@@ -51,6 +52,7 @@
             </collection>
         </collection>
     </resultMap>
+
     <select id="findById" parameterType="int" resultMap="findPackageCheckGroupCheckItem">
       SELECT p.*,c.id cgId ,c.name cgName,c.remark cgRemark,i.id ciId,i.name ciName
       FROM t_package p,t_checkGroup c,t_package_checkgroup pc ,t_checkitem i ,t_checkgroup_checkitem cc
@@ -60,4 +62,47 @@
     <select id="findByPackageId" parameterType="int" resultType="package">
         SELECT * FROM t_package WHERE id=#{id}
     </select>
+
+    <!--根据id查询套餐信息-->
+    <select id="findPackageById" parameterType="int" resultType="package">
+      SELECT  * FROM t_package WHERE id=#{id}
+    </select>
+
+    <!--根据套餐id查询其所属的检查组id集合-->
+    <select id="findPackageAndCheckedGroupIds" resultType="int" parameterType="int">
+        SELECT  checkGroup_id FROM t_package_checkGroup WHERE package_id=#{id}
+    </select>
+
+    <!--更新套餐信息-->
+    <update id="updatePackage" parameterType="package">
+        UPDATE t_package
+        <set>
+            name=#{name},
+            code=#{code},
+            helpCode=#{helpCode},
+            sex=#{sex},
+            age=#{age},
+            price=#{price},
+            remark=#{remark},
+            attention=#{attention},
+            img=#{img}
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <!--根据id删除套餐下的所有检查组集合-->
+    <delete id="deletePackage" parameterType="int">
+      DELETE  FROM t_package_checkGroup WHERE package_id=#{pkgId}
+    </delete>
+
+    <!--根据id查询套餐是否被引用-->
+    <select id="findPackageCount" parameterType="int" resultType="int">
+        SELECT  COUNT(0) FROM  t_package_checkGroup WHERE package_id=#{id}
+    </select>
+
+    <!--根据id删除套餐信息-->
+    <delete id="deletePackageById" parameterType="int">
+        DELETE  FROM t_package WHERE id=#{id}
+    </delete>
+
 </mapper>

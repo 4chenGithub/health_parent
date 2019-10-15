@@ -78,4 +78,9 @@
       UPDATE t_menu SET name=#{name},icon=#{icon},description=#{description},priority=#{priority} WHERE id=#{id}
     </update>
 
+    <!--查询所有菜单信息-->
+    <select id="findAll" resultType="menu">
+        select * from t_menu
+    </select>
+
 </mapper>
